@@ -98,6 +98,19 @@ def get_favorites_user():
     data_favorites_planets = [favorite_planets.serialize() for favorite_planets in favorite_planets]
     return jsonify(data_favorite_people, data_favorites_vehicles, data_favorites_planets), 200
 
+# USER FAVORITE PLANETS POST ROUTE
+
+@app.route('/user/<int:user_id>/favorite/people/<int:people_id>', methods=['POST'])
+def add_people_to_favorites(user_id, people_id):
+
+    exist = Favorite_People.query.filter_by(id_user=user_id, id_people=people_id).first()
+    if exist:
+        return jsonify({"msg": "This character already exists in favorites"}), 400
+    new_favorite_people = Favorite_People(id_user=user_id, id_people=people_id)
+    db.session.add(new_favorite_people)
+    db.session.commit()
+    return jsonify({"msg": "Character added to favorites"})
+
 
 # this only runs if `$ python src/app.py` is executed
 if __name__ == '__main__':
