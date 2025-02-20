@@ -98,7 +98,7 @@ def get_favorites_user():
     data_favorites_planets = [favorite_planets.serialize() for favorite_planets in favorite_planets]
     return jsonify(data_favorite_people, data_favorites_vehicles, data_favorites_planets), 200
 
-# USER FAVORITE PLANETS POST ROUTE
+# USER FAVORITE PEOPLE POST ROUTE
 
 @app.route('/user/<int:user_id>/favorite/people/<int:people_id>', methods=['POST'])
 def add_people_to_favorites(user_id, people_id):
@@ -109,7 +109,66 @@ def add_people_to_favorites(user_id, people_id):
     new_favorite_people = Favorite_People(id_user=user_id, id_people=people_id)
     db.session.add(new_favorite_people)
     db.session.commit()
-    return jsonify({"msg": "Character added to favorites"})
+    return jsonify({"msg": "Character added to favorites"}), 200
+
+# USER FAVORITE VEHICLES POST ROUTE
+
+@app.route('/user/<int:user_id>/favorite/vehicles/<int:vehicles_id>', methods=['POST'])
+def add_vehicles_to_favorites(user_id, vehicles_id):
+
+    exist = Favorite_Vehicles.query.filter_by(id_user=user_id, id_vehicles=vehicles_id).first()
+    if exist:
+        return jsonify({"msg": "This vehicle already exists in favorites"}), 400
+    new_favorite_vehicles = Favorite_Vehicles(id_user=user_id, id_vehicles=vehicles_id)
+    db.session.add(new_favorite_vehicles)
+    db.session.commit()
+    return jsonify({"msg": "Vehicle added to favorites"}), 200
+
+# USER FAVORITE PLANETS POST ROUTE
+
+@app.route('/user/<int:user_id>/favorite/planets/<int:planets_id>', methods=['POST'])
+def add_planets_to_favorites(user_id, planets_id):
+
+    exist = Favorite_Planets.query.filter_by(id_user=user_id, id_planets=planets_id).first()
+    if exist:
+        return jsonify({"msg": "This planet already exists in favorites"}), 400
+    new_favorite_planets = Favorite_Planets(id_user=user_id, id_planets=planets_id)
+    db.session.add(new_favorite_planets)
+    db.session.commit()
+    return jsonify({"msg": "Planet added to favorites"}), 200
+
+# USER FAVORITE PEOPLE DELETE ROUTE
+
+@app.route('/user/<int:user_id>/favorite/people/<int:people_id>', methods=['DELETE'])
+def delete_people_from_favorites(user_id, people_id):
+    exist = Favorite_People.query.filter_by(id_user=user_id, id_people=people_id).first()
+    if exist:
+        db.session.delete(exist)
+        db.session.commit()
+        return jsonify({"msg": "Character deleted from favorites"}), 200
+    return jsonify({"msg": "No user id or character was found"}), 400
+    
+# USER FAVORITE VEHICLES DELETE ROUTE
+
+@app.route('/user/<int:user_id>/favorite/vehicles/<int:vehicles_id>', methods=['DELETE'])
+def delete_vehicle_from_favorites(user_id, vehicles_id):
+    exist = Favorite_Vehicles.query.filter_by(id_user=user_id, id_vehicles=vehicles_id).first()
+    if exist:
+        db.session.delete(exist)
+        db.session.commit()
+        return jsonify({"msg": "Vehicle deleted from favorites"}), 200
+    return jsonify({"msg": "No user id or vehicle was found"}), 400
+    
+# USER FAVORITE PLANETS DELETE ROUTE
+
+@app.route('/user/<int:user_id>/favorite/planets/<int:planets_id>', methods=['DELETE'])
+def delete_planets_from_favorites(user_id, planets_id):
+    exist = Favorite_Planets.query.filter_by(id_user=user_id, id_planets=planets_id).first()
+    if exist:
+        db.session.delete(exist)
+        db.session.commit()
+        return jsonify({"msg": "Planet deleted from favorites"}), 200
+    return jsonify({"msg": "No user id or planet was found"}), 400
 
 
 # this only runs if `$ python src/app.py` is executed
